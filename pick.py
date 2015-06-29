@@ -4,7 +4,6 @@ import curses
 import inspect
 import argparse
 import os
-import sys
 from utils import printstr, pbcopy
 from table_view import TableView
 
@@ -23,6 +22,7 @@ parser = argparse.ArgumentParser(prog='pick',
 
 # Provided by the .sh entry file, thus not public
 parser.add_argument('input', help=argparse.SUPPRESS)
+parser.add_argument('output', help=argparse.SUPPRESS)
 
 parser.add_argument('-d', '--delimiter', default=None,
                     help="Delimiter to split the columns of the table, defaults to any whitespace char.")

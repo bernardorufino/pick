@@ -22,13 +22,15 @@ if [[ -t 0 ]]; then
     exit 1
 else
     BASEDIR="$(get_base_dir)"
-    TMPFILE="$(mktemp -t ${NAMESPACE})"
-    tee "${TMPFILE}" > /dev/null
-    python "${BASEDIR}/${SCRIPT}" "${TMPFILE}" "$@" < /dev/tty > /dev/tty
+    TMPFILE_IN="$(mktemp -t ${NAMESPACE})"
+    TMPFILE_OUT="$(mktemp -t ${NAMESPACE})"
+    tee "${TMPFILE_IN}" > /dev/null
+    python "${BASEDIR}/${SCRIPT}" "${TMPFILE_IN}" "${TMPFILE_OUT}" "$@" < /dev/tty > /dev/tty
     EXITCODE=$?
-    rm "${TMPFILE}"
-    if [[ ${EXITCODE} -eq 0 ]]; then
-        pbpaste
+    if [[ ${EXITCODE} -eq 0 && -f "${TMPFILE_OUT}" ]]; then
+        cat "${TMPFILE_OUT}"
     fi
+    rm "${TMPFILE_IN}"
+    rm "${TMPFILE_OUT}"
     exit ${EXITCODE}
 fi
