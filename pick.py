@@ -4,14 +4,10 @@ import curses
 import inspect
 import argparse
 import os
-from utils import printstr, pbcopy
+from utils import printstr, writestr, pbcopy
 from table_view import TableView
 
-# TODO: Select mode
 # TODO: Scroll for big tables (curses pad)
-
-INDENT = " " * 4
-
 
 ss = inspect.cleandoc
 
@@ -40,17 +36,18 @@ def draw(stdscr, offset, table):
     stdscr.move(top_offset, left_offset)
 
     # Draw instructions
-    printstr(stdscr, "[q] abort / [arrows] move / [space] select / [c] clear selection", curses.color_pair(3))
+    printstr(stdscr, "[q] abort / [arrows] move / [space] (un)select cell / [d] clear selection / [c] select column", curses.color_pair(3))
     printstr(stdscr, "[enter] print and copy selected cells (protip: use `pbpaste | ...` to pipe forward)", curses.color_pair(3))
     printstr(stdscr)
 
     # Output preview
-    if not table.selection:
-        printstr(stdscr, "Nothing selected", curses.color_pair(3))
-    else:
-        printstr(stdscr, "{} cells selected".format(len(table.selection)), curses.color_pair(3))
+    if table.selection:
+        printstr(stdscr, "[{}] cells selected".format(len(table.selection)), curses.color_pair(3))
         for content in table.selection_content:
-            printstr(stdscr, INDENT + content, curses.color_pair(1))
+            i, j = stdscr.getyx()
+            writestr(stdscr, " |=> ", curses.color_pair(4))
+            printstr(stdscr, content, curses.color_pair(1))
+            stdscr.move(i + 1, j)
         printstr(stdscr)
 
     # Refresh
@@ -81,7 +78,8 @@ def main_curses(stdscr, lines, d):
     curses.curs_set(0)
     curses.init_pair(1, 251, curses.COLOR_BLACK)
     curses.init_pair(2, curses.COLOR_BLACK, curses.COLOR_YELLOW)
-    curses.init_pair(3, 8, curses.COLOR_BLACK)
+    curses.init_pair(3, 238, curses.COLOR_BLACK)
+    curses.init_pair(4, 237, curses.COLOR_BLACK)
 
     offset = (1, 1)
     table = TableView(lines, d)

@@ -9,6 +9,10 @@ def printstr(stdscr, *args):
     stdscr.move(i + 1, j)
 
 
+def writestr(stdscr, *args):
+    stdscr.addstr(*args)
+
+
 def pbcopy(data):
     p = subprocess.Popen(['pbcopy'], stdin=subprocess.PIPE)
     p.communicate(data)
