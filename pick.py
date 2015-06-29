@@ -40,24 +40,18 @@ def draw(stdscr, offset, table):
     stdscr.move(top_offset, left_offset)
 
     # Draw instructions
-    printstr(stdscr, "Instructions:", curses.color_pair(3))
-    printstr(stdscr, INDENT + "                         q => abort", curses.color_pair(3))
-    printstr(stdscr, INDENT + "<up>/<right>/<down>/<left> => move", curses.color_pair(3))
-    printstr(stdscr, INDENT + "                   <space> => select", curses.color_pair(3))
-    printstr(stdscr, INDENT + "                         c => clear selection", curses.color_pair(3))
-    printstr(stdscr, INDENT + "                   <enter> => print and copy selected cells", curses.color_pair(3))
-    printstr(stdscr, INDENT + "                              protip: use `pbpaste | ...` to pipe forward", curses.color_pair(3))
+    printstr(stdscr, "[q] abort / [arrows] move / [space] select / [c] clear selection", curses.color_pair(3))
+    printstr(stdscr, "[enter] print and copy selected cells (protip: use `pbpaste | ...` to pipe forward)", curses.color_pair(3))
     printstr(stdscr)
 
     # Output preview
     if not table.selection:
         printstr(stdscr, "Nothing selected", curses.color_pair(3))
     else:
-        printstr(stdscr, "Output:", curses.color_pair(3))
+        printstr(stdscr, "{} cells selected".format(len(table.selection)), curses.color_pair(3))
         for content in table.selection_content:
             printstr(stdscr, INDENT + content, curses.color_pair(1))
         printstr(stdscr)
-        printstr(stdscr, "{} cells selected".format(len(table.selection)), curses.color_pair(3))
 
     # Refresh
     stdscr.refresh()
@@ -70,19 +64,21 @@ def main():
     d = args.delimiter
     output = curses.wrapper(main_curses, lines, d)
     if output:
-        # .sh handles the print
         pbcopy(output)
+        with open(args.output, 'w') as f:
+            f.write(output + os.linesep)
 
 def process_output(table):
     if table.selection:
         cells = table.selection_content
-        return os.linesep.join(cells) + os.linesep
+        return os.linesep.join(cells)
     else:
         return None
 
 
 # TODO: Non-uniform table (with merges and different size of columns/rows)
 def main_curses(stdscr, lines, d):
+    curses.curs_set(0)
     curses.init_pair(1, 251, curses.COLOR_BLACK)
     curses.init_pair(2, curses.COLOR_BLACK, curses.COLOR_YELLOW)
     curses.init_pair(3, 8, curses.COLOR_BLACK)
