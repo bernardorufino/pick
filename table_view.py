@@ -64,6 +64,16 @@ class TableView(object):
     def clear_selection(self):
         del self.selection[:]
 
+    def select_column(self):
+        _, j = self.position
+        for i, row in enumerate(self.table):
+            if j >= len(row):
+                continue
+            c = (i, j)
+            if c in self.selection:
+                self.selection.remove(c)
+            self.selection.append(c)
+
     def get(self, cell):
         i, j = cell
         return self.table[i][j]

@@ -96,8 +96,10 @@ def main_curses(stdscr, lines, d):
             table.move(di, dj)
         elif c == ord(' '):
             table.toggle_select()
-        elif c == ord('c'):
+        elif c == ord('d'):
             table.clear_selection()
+        elif c == ord('c'):
+            table.select_column()
         elif c == ord('\n') or c == curses.KEY_ENTER:
             print('<enter> => print and copy selected cells')
             return process_output(table)
