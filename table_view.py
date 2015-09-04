@@ -27,7 +27,7 @@ class TableView(object):
         """ Draws the table into screen stdscr with top left corner being (i, j).
 
         :param stdscr: Standard screen that just contains some information
-        :param table_pad: pad to draw table into
+        :param table_pad: Pad to draw table into
         :param top_offset: Top offset
         :param left_offset: Left offset
         """

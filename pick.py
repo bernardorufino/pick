@@ -11,15 +11,16 @@ ss = inspect.cleandoc
 
 parser = argparse.ArgumentParser(prog='pick',
                                  description="""Interactively lets the user pick a cell in a table given to the
-                                    standard input. The delimiter for the
-                                     columns may be chosen, whereas
-                                    lines are always delimited by \\n.""")
+                                                standard input. The delimiter for the
+                                                columns may be chosen, whereas
+                                                lines are always delimited by \\n.""")
 
 # Provided by the .sh entry file, thus not public
 parser.add_argument('input', help=argparse.SUPPRESS)
 parser.add_argument('output', help=argparse.SUPPRESS)
 
-parser.add_argument('-d', '--delimiter', default=None, help="Delimiter to split the columns of the table, defaults to any whitespace char.")
+parser.add_argument('-d', '--delimiter', default=None,
+                    help="Delimiter to split the columns of the table, defaults to any whitespace char.")
 
 
 def draw(stdscr, table_pad, output_pad, offset, table):
@@ -39,7 +40,7 @@ def draw(stdscr, table_pad, output_pad, offset, table):
 
     # Draw instructions
     printstr(stdscr, "[q] abort / [arrows] move / [space] (un)select cell / [d] clear selection / [c] select column", curses.color_pair(3))
-    printstr(stdscr, "[enter] print and copyselected cells(protip: use `pbpaste | ...` to pipe forward)", curses.color_pair(3))
+    printstr(stdscr, "[enter] print and copy selected cells(protip: use `pbpaste | ...` to pipe forward)", curses.color_pair(3))
     printstr(stdscr)
 
     # Output preview
