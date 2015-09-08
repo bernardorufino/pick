@@ -23,15 +23,12 @@ class TableView(object):
         self.selection = []
         self.position = (0, 0)
 
-    def draw(self, stdscr, table_pad, top_offset, left_offset):
-        """ Draws the table into screen stdscr with top left corner being (i, j).
+    def draw(self, table_pad):
+        """ Draws the table into screen/pad table_pad with top left corner being margin.
 
-        :param stdscr: Standard screen that just contains some information
         :param table_pad: Pad to draw table into
-        :param top_offset: Top offset
-        :param left_offset: Left offset
         """
-        mi, mj = stdscr.getmaxyx()
+
         for i, row in enumerate(self.table):
             for j, content in enumerate(row):
                 cell = (i, j)
@@ -50,18 +47,6 @@ class TableView(object):
                 j = self._column_offsets[j]
                 # +1 to leave the top table within one row of the top
                 table_pad.addstr(i, j, content, flags)
-
-        i, j = self.position
-        if i > top_offset + mi / 2 - 1:
-            top_offset += 1
-        elif i < top_offset:
-            top_offset -= 1
-        if (self._column_offsets[j + 1] >
-                mj + self._column_offsets[left_offset]):
-            left_offset += 1
-        elif j < left_offset:
-            left_offset -= 1
-        return top_offset, left_offset
 
     def move(self, di, dj):
         i, j = self.position
@@ -92,8 +77,8 @@ class TableView(object):
         i, j = cell
         return self.table[i][j]
 
-    def get_column_offset(self, left_offset):
-        return self._column_offsets[left_offset]
+    def column_offset(self, j):
+        return self._column_offsets[j]
 
     @property
     def selection_content(self):
@@ -104,12 +89,16 @@ class TableView(object):
         return len(self.table)
 
     @property
-    def width(self):
-        return sum(self._column_widths)
+    def ncolumns(self):
+        return len(self._column_widths)
 
     @property
-    def column_number(self):
-        return len(self.table)
+    def ncells(self):
+        return sum(len(row) for row in self.table)
+
+    @property
+    def width(self):
+        return sum(self._column_widths)
 
     @staticmethod
     def _limit(x, a, b):
