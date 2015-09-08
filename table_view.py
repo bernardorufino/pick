@@ -23,14 +23,12 @@ class TableView(object):
         self.selection = []
         self.position = (0, 0)
 
-    def draw(self, stdscr, top_offset, left_offset):
-        """ Draws the table into screen stdscr with top left corner being (i, j).
+    def draw(self, table_pad):
+        """ Draws the table into screen/pad table_pad with top left corner being margin.
 
-        :param stdscr: Screen to draw table into
-        :param top_offset: Top offset
-        :param left_offset: Left offset
+        :param table_pad: Pad to draw table into
         """
-        mi, mj = stdscr.getmaxyx()
+
         for i, row in enumerate(self.table):
             for j, content in enumerate(row):
                 cell = (i, j)
@@ -47,7 +45,8 @@ class TableView(object):
                     flags |= curses.color_pair(1)
 
                 j = self._column_offsets[j]
-                stdscr.addstr(top_offset + i, left_offset + j, content, flags)
+                # +1 to leave the top table within one row of the top
+                table_pad.addstr(i, j, content, flags)
 
     def move(self, di, dj):
         i, j = self.position
@@ -78,6 +77,9 @@ class TableView(object):
         i, j = cell
         return self.table[i][j]
 
+    def column_offset(self, j):
+        return self._column_offsets[j]
+
     @property
     def selection_content(self):
         return [self.get(c) for c in self.selection]
@@ -85,6 +87,18 @@ class TableView(object):
     @property
     def height(self):
         return len(self.table)
+
+    @property
+    def ncolumns(self):
+        return len(self._column_widths)
+
+    @property
+    def ncells(self):
+        return sum(len(row) for row in self.table)
+
+    @property
+    def width(self):
+        return sum(self._column_widths)
 
     @staticmethod
     def _limit(x, a, b):
@@ -106,7 +120,7 @@ class TableView(object):
     @staticmethod
     def _get_column_offsets(widths):
         n = len(widths)
-        offsets = [0] * n
-        for i in xrange(1, n):
+        offsets = [0] * (n + 1)
+        for i in xrange(1, n + 1):
             offsets[i] = offsets[i - 1] + widths[i - 1]
         return offsets
