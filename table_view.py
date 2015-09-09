@@ -20,7 +20,7 @@ class TableView(object):
         self.table = [line.rstrip(os.linesep).split(d) for line in lines]
         self._column_widths = self._get_column_widths(self.table)
         self._column_offsets = self._get_column_offsets(self._column_widths)
-        self.selection = []
+        self.selection = set()
         self.position = (0, 0)
 
     def draw(self, table_pad):
@@ -58,10 +58,10 @@ class TableView(object):
         if self.position in self.selection:
             self.selection.remove(self.position)
         else:
-            self.selection.append(self.position)
+            self.selection.add(self.position)
 
     def clear_selection(self):
-        del self.selection[:]
+        self.selection.clear()
 
     def select_column(self):
         _, j = self.position
@@ -71,7 +71,7 @@ class TableView(object):
             c = (i, j)
             if c in self.selection:
                 self.selection.remove(c)
-            self.selection.append(c)
+            self.selection.add(c)
 
     def get(self, cell):
         i, j = cell
