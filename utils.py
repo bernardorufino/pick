@@ -3,10 +3,12 @@ import subprocess
 
 def printstr(stdscr, *args):
     i, j = stdscr.getyx()
+    mi, _ = stdscr.getmaxyx()
     if not args:
         args = [""]
     stdscr.addstr(*args)
-    stdscr.move(i + 1, j)
+    if i + 1 < mi:
+        stdscr.move(i + 1, j)
 
 
 def writestr(stdscr, *args):

@@ -30,6 +30,8 @@ def draw(stdscr, table_pad, output_pad, margin, (top_offset, left_offset), table
     table_pad_width = mj - left_margin
 
     # Clear all pads and windows
+    if resizing:
+        stdscr.clear()
     table_pad.clear()
     if redraw_output:
         output_pad.clear()
