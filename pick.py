@@ -22,7 +22,7 @@ parser.add_argument('-d', '--delimiter', default=None,
                     help="Delimiter to split the columns of the table, defaults to any whitespace char.")
 
 
-def draw(stdscr, table_pad, output_pad, margin, (top_offset, left_offset), table, resizing):
+def draw(stdscr, table_pad, output_pad, margin, (top_offset, left_offset), table, resizing, redraw_output):
     top_margin, left_margin = margin
 
     mi, mj = stdscr.getmaxyx()
@@ -30,9 +30,9 @@ def draw(stdscr, table_pad, output_pad, margin, (top_offset, left_offset), table
     table_pad_width = mj - left_margin
 
     # Clear all pads and windows
-    stdscr.clear()
     table_pad.clear()
-    output_pad.clear()
+    if redraw_output:
+        output_pad.clear()
 
     # Draw table
     table.draw(table_pad)
@@ -43,7 +43,6 @@ def draw(stdscr, table_pad, output_pad, margin, (top_offset, left_offset), table
         top_offset += 1
     elif i < top_offset:
         top_offset -= 1
-
     # There's no guarantee that shifting the table one column to the right will make the entire column of the current
     # position visible bc unlike rows columns can have variable width. So, we shift until the column is fully visible.
     shift_left = lambda left_offset: table.column_offset(j + 1) > table.column_offset(left_offset) + table_pad_width - 1
@@ -64,7 +63,7 @@ def draw(stdscr, table_pad, output_pad, margin, (top_offset, left_offset), table
     printstr(stdscr)
 
     # Output preview
-    if table.selection:
+    if redraw_output and table.selection:
         output_pad.move(0, 0)
         printstr(output_pad, "[{}] cells selected".format(len(table.selection)), curses.color_pair(3))
         for content in table.selection_content:
@@ -74,10 +73,13 @@ def draw(stdscr, table_pad, output_pad, margin, (top_offset, left_offset), table
             output_pad.move(i + 1, j)
 
     # Refresh
-    stdscr.refresh()
-    table_pad.refresh(top_offset, table.column_offset(left_offset), top_margin, left_margin,
-                      top_margin + table_pad_height - 1, left_margin + table_pad_width - 1)
-    output_pad.refresh(0, 0, top_margin + table_pad_height + 4, left_margin, mi - 1, mj - 1)
+    stdscr.noutrefresh()
+    table_pad.noutrefresh(top_offset, table.column_offset(left_offset), top_margin, left_margin,
+                          top_margin + table_pad_height - 1, left_margin + table_pad_width - 1)
+    if redraw_output:
+        output_pad.noutrefresh(0, 0, top_margin + table_pad_height + 4, left_margin, mi - 1, mj - 1)
+    curses.doupdate()
+
     return top_offset, left_offset
 
 
@@ -116,10 +118,11 @@ def main_curses(stdscr, lines, d):
     table_pad = curses.newpad(table.height + 1, table.width)
     # TODO: Get width of output pad from column offsets
     output_pad = curses.newpad(table.ncells + 1, table.width)
-    draw(stdscr, table_pad, output_pad, margin, table_offset, table, False)
+    draw(stdscr, table_pad, output_pad, margin, table_offset, table, False, True)
 
     while True:
         c = stdscr.getch()
+        redraw_output = False
         if c == ord('q'):
             return
         elif c in TableView.DIRECTIONS.keys():
@@ -127,15 +130,17 @@ def main_curses(stdscr, lines, d):
             table.move(di, dj)
         elif c == ord(' '):
             table.toggle_select()
+            redraw_output = True
         elif c == ord('d'):
             table.clear_selection()
+            redraw_output = True
         elif c == ord('c'):
             table.select_column()
+            redraw_output = True
         elif c == ord('\n') or c == curses.KEY_ENTER:
-            print('<enter> => print and copy selected cells')
             return process_output(table)
         resizing = (c == -1)
-        table_offset = draw(stdscr, table_pad, output_pad, margin, table_offset, table, resizing)
+        table_offset = draw(stdscr, table_pad, output_pad, margin, table_offset, table, resizing, redraw_output)
 
 
 if __name__ == '__main__':
