@@ -218,7 +218,7 @@ def main_curses(stdscr, lines, d, mode):
                 table.select_column()
                 redraw_output = True
             elif c == ord('\n') or c == curses.KEY_ENTER:
-                return process_output(table)
+                return process_output(table, mode)
             resizing = (c == -1)
             table_offset = draw(stdscr, table_pad, output_pad, margin, table_offset, table,
                                 resizing, redraw_output, mode, 0)
