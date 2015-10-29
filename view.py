@@ -70,6 +70,8 @@ class View(object):
                 i = self._next_output_processor_index()
                 self._set_output_processor(i)
                 redraw_output = True
+            elif c == ord('p'):
+                return self._table.get(self._selector.position)
             elif c in self.DIRECTIONS:
                 di, dj = self.DIRECTIONS[c]
                 self._selector.move(di, dj)

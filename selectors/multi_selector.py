@@ -74,4 +74,5 @@ class MultiSelector(Selector):
         printstr(pad, "     [i] single-selection                                                     ", curses.color_pair(3))
         printstr(pad, "[arrows] move                               [d] start/end subtable deselection", curses.color_pair(3))
         printstr(pad, " [space] start/end subtable selection   [enter] print and copy                ", curses.color_pair(3))
-        printstr(pad, "                                            [q] abort                         ", curses.color_pair(3))
+        printstr(pad, "     [p] print current                      [q] abort                         ", curses.color_pair(3))
+        printstr(pad)

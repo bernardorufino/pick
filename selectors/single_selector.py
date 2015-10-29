@@ -42,6 +42,8 @@ class SingleSelector(Selector):
         # TODO: Remove hard-coded dependency on next selector, see View class for details
         printstr(pad, "Single-selection", curses.color_pair(7))
         printstr(pad, "     [i] multi-selection                                               ", curses.color_pair(3))
-        printstr(pad, "[arrows] move              [c] select column     [enter] print and copy", curses.color_pair(3))
-        printstr(pad, " [space] (un)select cell   [d] clear selection       [q] abort         ", curses.color_pair(3))
+        printstr(pad, "[arrows] move              [c] select column         [p] print current ", curses.color_pair(3))
+        printstr(pad, " [space] (un)select cell   [d] clear selection   [enter] print and copy", curses.color_pair(3))
+        printstr(pad, "                                                     [q] abort         ", curses.color_pair(3))
+
         printstr(pad)
