@@ -131,7 +131,6 @@ class View(object):
         self.screen.move(top_margin + table_pad_height + 1, left_margin)
         h1, _ = self.screen.getyx()
         self._selector.draw_instructions(self.screen)
-        printstr(self.screen, "Pro-tip: If not confident about piping inline with `a | pick | b`, use `a | pick` then `pbpaste | b`", curses.color_pair(7))
         printstr(self.screen)
         printstr(self.screen, self._output_processor.name, curses.color_pair(7))
         printstr(self.screen)

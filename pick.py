@@ -19,7 +19,9 @@ ss = inspect.cleandoc
 parser = argparse.ArgumentParser(prog='pick',
                                  description="""Interactively lets the user pick a cell in a table given to the
                                                 standard input. The delimiter for the columns may be chosen, whereas
-                                                lines are always delimited by \\n.""")
+                                                lines are always delimited by \\n.
+                                                Pro-tip: If not confident about piping inline with `a | pick | b`, use
+                                                `a | pick` then `pbpaste | b`""")
 
 # Provided by the .sh entry file, thus not public
 parser.add_argument('input', help=argparse.SUPPRESS)
