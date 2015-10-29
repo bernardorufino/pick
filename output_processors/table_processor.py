@@ -11,6 +11,10 @@ class TableProcessor(OutputProcessor):
     def height(self):
         return self._table.height
 
+    @property
+    def name(self):
+        return "Table output"
+
     def draw_preview(self, pad):
         # TODO: Create custom method draw_subtable in Table class instead of having to create a new object here
         if self._table.selection:

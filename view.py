@@ -65,6 +65,10 @@ class View(object):
                 i = self._selectors.index(self._selector)
                 i = (i + 1) % len(self._selectors)
                 self._set_selector(i)
+            elif c == ord('o'):
+                i = self._next_output_processor_index()
+                self._set_output_processor(i)
+                redraw_output = True
             elif c in self.DIRECTIONS:
                 di, dj = self.DIRECTIONS[c]
                 self._selector.move(di, dj)
@@ -75,6 +79,11 @@ class View(object):
                 redraw_output = self._selector.handle_input(c)
             resizing = (c == -1)
             self.draw(resizing=resizing, redraw_output=redraw_output)
+
+    def _next_output_processor_index(self):
+        i = self._output_processors.index(self._output_processor)
+        i = (i + 1) % len(self._output_processors)
+        return i
 
     def draw(self, resizing, redraw_output):
 
@@ -123,6 +132,11 @@ class View(object):
         h1, _ = self.screen.getyx()
         self._selector.draw_instructions(self.screen)
         printstr(self.screen, "Pro-tip: If not confident about piping inline with `a | pick | b`, use `a | pick` then `pbpaste | b`", curses.color_pair(7))
+        printstr(self.screen)
+        printstr(self.screen, self._output_processor.name, curses.color_pair(7))
+        printstr(self.screen)
+        next_output_processor = self._output_processors[self._next_output_processor_index()]
+        printstr(self.screen, "     [o] {} mode".format(next_output_processor.name), curses.color_pair(3))
         printstr(self.screen)
         h2, _ = self.screen.getyx()
         instructions_h = h2 - h1

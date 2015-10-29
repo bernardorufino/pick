@@ -4,6 +4,10 @@ class OutputProcessor(object):
         self._table = None
         self._delimiter = None
 
+    @property
+    def name(self):
+        raise AssertionError("Not implemented")
+
     def setup(self, table, delimiter):
         self._table = table
         self._delimiter = delimiter

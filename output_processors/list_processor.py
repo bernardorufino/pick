@@ -10,6 +10,10 @@ class ListProcessor(OutputProcessor):
     def height(self):
         return self._table.ncells
 
+    @property
+    def name(self):
+        return "List output"
+
     def draw_preview(self, pad):
         if self._table.selection:
             pad.move(0, 0)
