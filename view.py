@@ -66,6 +66,7 @@ class View(object):
                 i = (i + 1) % len(self._selectors)
                 self._set_selector(i)
             elif c == ord('o'):
+                # TODO: Support switch from table to list with different orientations (row-first or column-first)
                 i = self._next_output_processor_index()
                 self._set_output_processor(i)
                 redraw_output = True
