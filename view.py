@@ -34,6 +34,7 @@ class View(object):
         curses.init_pair(4, 237, curses.COLOR_BLACK)
         curses.init_pair(5, curses.COLOR_WHITE, curses.COLOR_RED)
         curses.init_pair(6, curses.COLOR_WHITE, curses.COLOR_BLUE)
+        curses.init_pair(7, 240, curses.COLOR_BLACK)
 
         self.screen = screen
         self.table_pad = curses.newpad(self._table.height + 1, self._table.width)
@@ -100,10 +101,14 @@ class View(object):
 
         # Draw instructions
         self.screen.move(top_margin + table_pad_height + 1, left_margin)
+        h1, _ = self.screen.getyx()
         self._selector.draw_instructions(self.screen)
         printstr(self.screen, "[q] abort / [arrows] move / [space] (un)select cell / [d] clear selection / [c] select column", curses.color_pair(3))
-        printstr(self.screen, "[enter] print and copy selected cells (protip: use `pbpaste | ...` to pipe forward)", curses.color_pair(3))
+        printstr(self.screen, "[enter] print and copy selected cells", curses.color_pair(3))
+        printstr(self.screen, "Pro-tip: If not confident about piping inline with `a | pick | b`, use `a | pick` then `pbpaste | b`", curses.color_pair(7))
         printstr(self.screen)
+        h2, _ = self.screen.getyx()
+        instructions_h = h2 - h1
 
         # Output preview
         self._output_processor.draw_preview(self.output_pad)
@@ -112,7 +117,7 @@ class View(object):
         self.screen.noutrefresh()
         self.table_pad.noutrefresh(top_offset, self._table.column_offset(left_offset), top_margin, left_margin,
                                    top_margin + table_pad_height - 1, left_margin + table_pad_width - 1)
-        self.output_pad.noutrefresh(0, 0, top_margin + table_pad_height + 4, left_margin, mi - 1, mj - 1)
+        self.output_pad.noutrefresh(0, 0, top_margin + table_pad_height + instructions_h + 1, left_margin, mi - 1, mj - 1)
         curses.doupdate()
 
     @staticmethod

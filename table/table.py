@@ -22,7 +22,9 @@ class Table(object):
     def width(self):
         return sum(self._column_widths)
 
-    def draw(self, pad, flags_provider):
+    # TODO: Remove margin and use current position in pad (tried but got errors)
+    def draw(self, pad, flags_provider, margin=(0, 0)):
+        top, left = margin
         for i, row in enumerate(self.table):
             for j, content in enumerate(row):
                 p = (i, j)
@@ -31,7 +33,9 @@ class Table(object):
                 flags = flags_provider(p, content)
                 y = i
                 x = self._column_offsets[j]
-                pad.addstr(y, x, content, flags)
+                pad.addstr(top + y, left + x, content, flags)
+
+
 
     def get(self, (i, j)):
         return self.table[i][j]

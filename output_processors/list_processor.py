@@ -13,7 +13,7 @@ class ListProcessor(OutputProcessor):
     def draw_preview(self, pad):
         if self._table.selection:
             pad.move(0, 0)
-            printstr(pad, "[{}] cells selected".format(len(self._table.selection)), curses.color_pair(3))
+            printstr(pad, "[{}] cells selected".format(len(self._table.selection)), curses.color_pair(7))
             for content in self._table.selection_content:
                 i, j = pad.getyx()
                 writestr(pad, " |=> ", curses.color_pair(1))

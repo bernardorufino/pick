@@ -1,6 +1,8 @@
+import curses
 import os
 from output_processors.output_processor import OutputProcessor
 from table.table import Table
+from utils import printstr
 
 
 class TableProcessor(OutputProcessor):
@@ -11,8 +13,14 @@ class TableProcessor(OutputProcessor):
 
     def draw_preview(self, pad):
         # TODO: Create custom method draw_subtable in Table class instead of having to create a new object here
-        output = self._structured_output()
-        return Table(output).draw(pad, lambda p, content: 0)
+        if self._table.selection:
+            pad.move(0, 0)
+            output = self._structured_output()
+            output_table = Table(output)
+            printstr(pad, "Table {}x{} with {} filled cells".format(output_table.height, output_table.ncolumns,
+                                                                    len(self._table.selection)),
+                     curses.color_pair(7))
+            output_table.draw(pad, lambda p, content: 0, margin=(1, 0))
 
     def process(self):
         output = self._structured_output()
