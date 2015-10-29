@@ -1,6 +1,3 @@
-import os
-
-
 class OutputProcessor(object):
 
     def __init__(self):

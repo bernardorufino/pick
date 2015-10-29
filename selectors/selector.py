@@ -1,5 +1,3 @@
-
-
 class Selector(object):
 
     def __init__(self):
@@ -16,17 +14,13 @@ class Selector(object):
         self.position = (i + di, j + dj)
 
     def draw(self, pad):
-        # Implement
-        pass
+        raise AssertionError("Not implemented")
 
     def draw_instructions(self, pad):
-        # Implement
         pass
 
     def clear(self, pad):
-        # Implement
         pass
 
     def handle_input(self, c):
-        # Implement
-        pass
+        raise AssertionError("Not implemented")
