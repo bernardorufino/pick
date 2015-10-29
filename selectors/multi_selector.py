@@ -1,6 +1,7 @@
 import curses
 from enum import Enum
 from selector import Selector
+from utils import printstr
 
 
 class MultiSelector(Selector):
@@ -67,4 +68,8 @@ class MultiSelector(Selector):
                 self._state = self.State.move
         return redraw_output
 
-
+    def draw_instructions(self, pad):
+        printstr(pad, "[arrows] move                               [d] start/end subtable deselection", curses.color_pair(3))
+        printstr(pad, " [space] start/end subtable selection   [enter] print and copy                ", curses.color_pair(3))
+        printstr(pad, "                                            [q] abort                         ", curses.color_pair(3))
+        printstr(pad)

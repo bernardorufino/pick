@@ -1,6 +1,7 @@
 import curses
 
 from selectors.selector import Selector
+from utils import printstr
 
 
 class SingleSelector(Selector):
@@ -36,5 +37,7 @@ class SingleSelector(Selector):
             redraw_output = True
         return redraw_output
 
-
-
+    def draw_instructions(self, pad):
+        printstr(pad, "[arrows] move              [c] select column     [enter] print and copy", curses.color_pair(3))
+        printstr(pad, " [space] (un)select cell   [d] clear selection       [q] abort         ", curses.color_pair(3))
+        printstr(pad)

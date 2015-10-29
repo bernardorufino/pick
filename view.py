@@ -106,8 +106,6 @@ class View(object):
         self.screen.move(top_margin + table_pad_height + 1, left_margin)
         h1, _ = self.screen.getyx()
         self._selector.draw_instructions(self.screen)
-        printstr(self.screen, "[q] abort / [arrows] move / [space] (un)select cell / [d] clear selection / [c] select column", curses.color_pair(3))
-        printstr(self.screen, "[enter] print and copy selected cells", curses.color_pair(3))
         printstr(self.screen, "Pro-tip: If not confident about piping inline with `a | pick | b`, use `a | pick` then `pbpaste | b`", curses.color_pair(7))
         printstr(self.screen)
         h2, _ = self.screen.getyx()
