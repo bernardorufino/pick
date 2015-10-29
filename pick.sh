@@ -18,7 +18,7 @@ function get_base_dir {
 }
 
 if [[ -t 0 ]]; then
-    echo "Run cell with piped input. E.g. ls -l | cell"
+    echo "Run pick with piped input. E.g. ls -l | pick"
     exit 1
 else
     BASEDIR="$(get_base_dir)"
