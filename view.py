@@ -99,6 +99,9 @@ class View(object):
         if j < left_offset:
             left_offset -= 1
 
+        # Set h/v scroll
+        self.table_offset = (top_offset, left_offset)
+
         # Draw instructions
         self.screen.move(top_margin + table_pad_height + 1, left_margin)
         h1, _ = self.screen.getyx()
