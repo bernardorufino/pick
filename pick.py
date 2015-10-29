@@ -4,148 +4,76 @@ import curses
 import inspect
 import argparse
 import os
-from utils import printstr, writestr, pbcopy
-from table_view import TableView
+from enum import Enum
+from output_processors.list_processor import ListProcessor
+from output_processors.table_processor import TableProcessor
+from selectors.multi_selector import MultiSelector
+from selectors.single_selector import SingleSelector
+
+from table.selectable_table import SelectableTable
+from utils import pbcopy
+from view import View
 
 ss = inspect.cleandoc
 
 parser = argparse.ArgumentParser(prog='pick',
                                  description="""Interactively lets the user pick a cell in a table given to the
                                                 standard input. The delimiter for the columns may be chosen, whereas
-                                                lines are always delimited by \\n.""")
+                                                lines are always delimited by \\n.
+                                                Pro-tip: If not confident about piping inline with `a | pick | b`, use
+                                                `a | pick` then `pbpaste | b`""")
 
 # Provided by the .sh entry file, thus not public
 parser.add_argument('input', help=argparse.SUPPRESS)
 parser.add_argument('output', help=argparse.SUPPRESS)
 
-parser.add_argument('-d', '--delimiter', default=None,
+parser.add_argument('-d', '--delimiter', default=' ',
                     help="Delimiter to split the columns of the table, defaults to any whitespace char.")
 
+parser.add_argument('-t', '--table', default=False, action='store_true',
+                    help="Enter in subtable selection mode. In this mode instead of selecting separate cells and "
+                         "returning a list as output, you select a structured portion of the table and the output is "
+                         "also a table obtained by concatenating the subtables selected.")
 
-def draw(stdscr, table_pad, output_pad, margin, (top_offset, left_offset), table, resizing, redraw_output):
-    top_margin, left_margin = margin
 
-    mi, mj = stdscr.getmaxyx()
-    table_pad_height = mi / 2 - top_margin
-    table_pad_width = mj - left_margin
+class SelectionMode(Enum):
+    list = 0
+    table = 1
 
-    # Clear all pads and windows
-    if resizing:
-        stdscr.clear()
-    table_pad.clear()
-    if redraw_output:
-        output_pad.clear()
 
-    # Draw table
-    table.draw(table_pad)
-
-    # Scroll up/down
-    i, j = table.position
-    if i > top_offset + table_pad_height - 1:
-        top_offset += 1
-    elif i < top_offset:
-        top_offset -= 1
-    # There's no guarantee that shifting the table one column to the right will make the entire column of the current
-    # position visible bc unlike rows columns can have variable width. So, we shift until the column is fully visible.
-    shift_left = lambda left_offset: table.column_offset(j + 1) > table.column_offset(left_offset) + table_pad_width - 1
-    if shift_left(left_offset):
-        while shift_left(left_offset):
-            left_offset += 1
-    elif resizing:
-        while left_offset >= 1 and table.column_offset(j + 1) - table.column_offset(left_offset - 1) < table_pad_width:
-            left_offset -= 1
-
-    if j < left_offset:
-        left_offset -= 1
-
-    # Draw instructions
-    stdscr.move(top_margin + table_pad_height + 1, left_margin)
-    printstr(stdscr, "[q] abort / [arrows] move / [space] (un)select cell / [d] clear selection / [c] select column", curses.color_pair(3))
-    printstr(stdscr, "[enter] print and copy selected cells (protip: use `pbpaste | ...` to pipe forward)", curses.color_pair(3))
-    printstr(stdscr)
-
-    # Output preview
-    if redraw_output and table.selection:
-        output_pad.move(0, 0)
-        printstr(output_pad, "[{}] cells selected".format(len(table.selection)), curses.color_pair(3))
-        for content in table.selection_content:
-            i, j = output_pad.getyx()
-            writestr(output_pad, " |=> ", curses.color_pair(1))
-            printstr(output_pad, content, curses.color_pair(1))
-            output_pad.move(i + 1, j)
-
-    # Refresh
-    stdscr.noutrefresh()
-    table_pad.noutrefresh(top_offset, table.column_offset(left_offset), top_margin, left_margin,
-                          top_margin + table_pad_height - 1, left_margin + table_pad_width - 1)
-    if redraw_output:
-        output_pad.noutrefresh(0, 0, top_margin + table_pad_height + 4, left_margin, mi - 1, mj - 1)
-    curses.doupdate()
-
-    return top_offset, left_offset
+def process_input(input_table, delimiter):
+    if delimiter == ' ':
+        delimiter = None
+    return [line.rstrip(os.linesep).split(delimiter) for line in input_table]
 
 
 def main():
     args = parser.parse_args()
+    mode = SelectionMode.table if args.table else SelectionMode.list
+
+    if mode == SelectionMode.table:
+        selectors = [MultiSelector(), SingleSelector()]
+        output_processors = [TableProcessor(), ListProcessor()]
+    else:
+        selectors = [SingleSelector(), MultiSelector()]
+        output_processors = [ListProcessor(), TableProcessor()]
+
     with open(args.input, 'r') as f:
-        lines = f.readlines()
-    d = args.delimiter
-    output = curses.wrapper(main_curses, lines, d)
+        rows = f.readlines()
+    input_table = process_input(rows, args.delimiter)
+    table = SelectableTable(input_table)
+
+    view = View(table, selectors, output_processors, args)
+    output = curses.wrapper(view.run)
+
     if output:
         pbcopy(output)
         with open(args.output, 'w') as f:
             f.write(output + os.linesep)
 
 
-def process_output(table):
-    if table.selection:
-        cells = table.selection_content
-        return os.linesep.join(cells)
-    else:
-        return None
-
-
-# TODO: Non-uniform table (with merges and different size of columns/rows)
-# TODO: Change tables and scroll in both of them
-def main_curses(stdscr, lines, d):
-    curses.curs_set(0)
-    curses.init_pair(1, 251, curses.COLOR_BLACK)
-    curses.init_pair(2, curses.COLOR_BLACK, curses.COLOR_YELLOW)
-    curses.init_pair(3, curses.COLOR_GREEN, curses.COLOR_BLACK)
-    curses.init_pair(4, 237, curses.COLOR_BLACK)
-
-    margin = (1, 2)
-    table_offset = (0, 0)
-    table = TableView(lines, d)
-    table_pad = curses.newpad(table.height + 1, table.width)
-    # TODO: Get width of output pad from column offsets
-    output_pad = curses.newpad(table.ncells + 1, table.width)
-    draw(stdscr, table_pad, output_pad, margin, table_offset, table, False, True)
-
-    while True:
-        c = stdscr.getch()
-        redraw_output = False
-        if c == ord('q'):
-            return
-        elif c in TableView.DIRECTIONS.keys():
-            di, dj = TableView.DIRECTIONS[c]
-            table.move(di, dj)
-        elif c == ord(' '):
-            table.toggle_select()
-            redraw_output = True
-        elif c == ord('d'):
-            table.clear_selection()
-            redraw_output = True
-        elif c == ord('c'):
-            table.select_column()
-            redraw_output = True
-        elif c == ord('\n') or c == curses.KEY_ENTER:
-            return process_output(table)
-        resizing = (c == -1)
-        table_offset = draw(stdscr, table_pad, output_pad, margin, table_offset, table, resizing, redraw_output)
-
-
 if __name__ == '__main__':
     exit(main())
+
 
 raise AssertionError('Only use this script from a terminal')

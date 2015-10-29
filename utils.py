@@ -18,3 +18,7 @@ def writestr(stdscr, *args):
 def pbcopy(data):
     p = subprocess.Popen(['pbcopy'], stdin=subprocess.PIPE)
     p.communicate(data)
+
+
+def limit(x, a, b):
+    return max(a, min(b, x))
