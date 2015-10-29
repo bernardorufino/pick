@@ -19,7 +19,7 @@ class SelectableTable(Table):
             self.selection.append(p)
 
     def clear_selection(self):
-        self.selection.clear()
+        del self.selection[:]
 
     def select_column(self, j):
         for i, row in enumerate(self.table):
