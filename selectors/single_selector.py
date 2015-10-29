@@ -39,6 +39,9 @@ class SingleSelector(Selector):
         return redraw_output
 
     def draw_instructions(self, pad):
+        printstr(pad, "Single-selection", curses.color_pair(7))
+        printstr(pad)
+        printstr(pad, "     [i] multi-selection                                               ", curses.color_pair(3))
         printstr(pad, "[arrows] move              [c] select column     [enter] print and copy", curses.color_pair(3))
         printstr(pad, " [space] (un)select cell   [d] clear selection       [q] abort         ", curses.color_pair(3))
         printstr(pad)

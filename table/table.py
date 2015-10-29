@@ -35,8 +35,6 @@ class Table(object):
                 x = self._column_offsets[j]
                 pad.addstr(top + y, left + x, content, flags)
 
-
-
     def get(self, (i, j)):
         return self.table[i][j]
 

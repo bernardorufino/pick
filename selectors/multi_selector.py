@@ -69,6 +69,9 @@ class MultiSelector(Selector):
         return redraw_output
 
     def draw_instructions(self, pad):
+        printstr(pad, "Multi-selection", curses.color_pair(7))
+        printstr(pad)
+        printstr(pad, "     [i] single-selection                                                     ", curses.color_pair(3))
         printstr(pad, "[arrows] move                               [d] start/end subtable deselection", curses.color_pair(3))
         printstr(pad, " [space] start/end subtable selection   [enter] print and copy                ", curses.color_pair(3))
         printstr(pad, "                                            [q] abort                         ", curses.color_pair(3))

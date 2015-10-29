@@ -12,19 +12,31 @@ class View(object):
     }
     MARGIN = (1, 2)
 
-    def __init__(self, table, selector, output_processor, args):
+    def __init__(self, table, selectors, output_processors, args):
         self._table = table
-        self._selector = selector
-        self._selector.setup(self._table, self)
-        self._output_processor = output_processor
-        self._output_processor.setup(self._table, args.delimiter)
         self.delimiter = args.delimiter
         self.table_offset = (0, 0)
+
+        self._selectors = selectors[:]
+        self._set_selector(0)
+
+        self._output_processors = output_processors[:]
+        self._set_output_processor(0)
 
         # To be assigned when run is called by curses
         self.screen = None
         self.table_pad = None
         self.output_pad = None
+
+    def _set_selector(self, i):
+        old_position = self._selector.position if hasattr(self, '_selector') else (0, 0)
+        self._selector = self._selectors[i]
+        self._selector.setup(self._table, self)
+        self._selector.position = old_position
+        
+    def _set_output_processor(self, i):
+        self._output_processor = self._output_processors[i]
+        self._output_processor.setup(self._table, self.delimiter)
 
     def _setup_curses(self, screen):
         curses.curs_set(0)
@@ -49,6 +61,10 @@ class View(object):
             redraw_output = False
             if c == ord('q'):
                 return
+            elif c == ord('i'):
+                i = self._selectors.index(self._selector)
+                i = (i + 1) % len(self._selectors)
+                self._set_selector(i)
             elif c in self.DIRECTIONS:
                 di, dj = self.DIRECTIONS[c]
                 self._selector.move(di, dj)

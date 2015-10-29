@@ -5,6 +5,10 @@ import inspect
 import argparse
 import os
 from enum import Enum
+from output_processors.list_processor import ListProcessor
+from output_processors.table_processor import TableProcessor
+from selectors.multi_selector import MultiSelector
+from selectors.single_selector import SingleSelector
 
 from table.selectable_table import SelectableTable
 from utils import pbcopy
@@ -46,22 +50,18 @@ def main():
     mode = SelectionMode.table if args.table else SelectionMode.list
 
     if mode == SelectionMode.table:
-        from selectors.multi_selector import MultiSelector
-        selector = MultiSelector()
-        from output_processors.table_processor import TableProcessor
-        output_processor = TableProcessor()
+        selectors = [MultiSelector(), SingleSelector()]
+        output_processors = [TableProcessor(), ListProcessor()]
     else:
-        from selectors.single_selector import SingleSelector
-        selector = SingleSelector()
-        from output_processors.list_processor import ListProcessor
-        output_processor = ListProcessor()
+        selectors = [SingleSelector(), MultiSelector()]
+        output_processors = [ListProcessor(), TableProcessor()]
 
     with open(args.input, 'r') as f:
         rows = f.readlines()
     input_table = process_input(rows, args.delimiter)
     table = SelectableTable(input_table)
 
-    view = View(table, selector, output_processor, args)
+    view = View(table, selectors, output_processors, args)
     output = curses.wrapper(view.run)
 
     if output:
