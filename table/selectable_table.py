@@ -27,7 +27,7 @@ class SelectableTable(Table):
                 continue
             p = (i, j)
             if p not in self.selection:
-                self.selection.add(p)
+                self.selection.append(p)
 
     def _iterate_subtable(self, (ra, ca), (rb, cb), callable):
         for i in range(min(ra, rb), max(ra, rb) + 1):

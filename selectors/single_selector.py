@@ -33,7 +33,8 @@ class SingleSelector(Selector):
             self._table.clear_selection()
             redraw_output = True
         elif c == ord('c'):
-            self._table.select_column()
+            _, j = self.position
+            self._table.select_column(j)
             redraw_output = True
         return redraw_output
 
