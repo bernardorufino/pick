@@ -1,3 +1,6 @@
+from utils import limit
+
+
 class Selector(object):
 
     def __init__(self):
@@ -11,7 +14,9 @@ class Selector(object):
 
     def move(self, di, dj):
         i, j = self.position
-        self.position = (i + di, j + dj)
+        i = limit(i + di, 0, self._table.height - 1)
+        j = limit(j + dj, 0, len(self._table.table[i]) - 1)
+        self.position = (i, j)
 
     def draw(self, pad):
         raise AssertionError("Not implemented")
