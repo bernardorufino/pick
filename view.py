@@ -50,7 +50,9 @@ class View(object):
 
         self.screen = screen
         self.table_pad = curses.newpad(self._table.height + 1, self._table.width)
-        self.output_pad = curses.newpad(self._table.ncells + 1, self._table.width)
+        # Have to account for header size (width and height)
+        # TODO: Remove hard-coded 50 value
+        self.output_pad = curses.newpad(self._table.ncells + 2, max(self._table.width, 50))
 
     def run(self, screen):
         self._setup_curses(screen)
