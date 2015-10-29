@@ -71,7 +71,6 @@ class MultiSelector(Selector):
     def draw_instructions(self, pad):
         # TODO: Remove hard-coded dependency on next selector, see View class for details
         printstr(pad, "Multi-selection", curses.color_pair(7))
-        printstr(pad)
         printstr(pad, "     [i] single-selection                                                     ", curses.color_pair(3))
         printstr(pad, "[arrows] move                               [d] start/end subtable deselection", curses.color_pair(3))
         printstr(pad, " [space] start/end subtable selection   [enter] print and copy                ", curses.color_pair(3))

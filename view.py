@@ -131,9 +131,7 @@ class View(object):
         self.screen.move(top_margin + table_pad_height + 1, left_margin)
         h1, _ = self.screen.getyx()
         self._selector.draw_instructions(self.screen)
-        printstr(self.screen)
         printstr(self.screen, self._output_processor.name, curses.color_pair(7))
-        printstr(self.screen)
         next_output_processor = self._output_processors[self._next_output_processor_index()]
         printstr(self.screen, "     [o] {} mode".format(next_output_processor.name), curses.color_pair(3))
         printstr(self.screen)
