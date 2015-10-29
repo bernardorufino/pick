@@ -69,6 +69,7 @@ class MultiSelector(Selector):
         return redraw_output
 
     def draw_instructions(self, pad):
+        # TODO: Remove hard-coded dependency on next selector, see View class for details
         printstr(pad, "Multi-selection", curses.color_pair(7))
         printstr(pad)
         printstr(pad, "     [i] single-selection                                                     ", curses.color_pair(3))
