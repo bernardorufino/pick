@@ -7,6 +7,7 @@ from utils import printstr
 
 class TableProcessor(OutputProcessor):
 
+    # TODO: Remove deprecated property due to output processor switch feature (we always need the highest height now)
     @property
     def height(self):
         return self._table.height
