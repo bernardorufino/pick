@@ -20,6 +20,6 @@
 ## Using
 Give it a try:
 * `ls -l | pick  # print files and copy to clipboard`
-* `ls | pick | xargs -n 1 rm  # select files in current directory before removing`
+* `ls | pick | xargs rm  # select files in current directory before removing`
 
 
