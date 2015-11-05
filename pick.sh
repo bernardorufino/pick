@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 NAMESPACE="com.brufino.pick"
-SCRIPT="pick.py"
+SCRIPT="src/pick.py"
 
 # Get the directory of this script so we can execute the related python (http://stackoverflow.com/a/246128/212110)
 function get_base_dir {
