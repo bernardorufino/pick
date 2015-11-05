@@ -1,5 +1,5 @@
 import curses
-from enum import Enum
+from vendor.enum import Enum
 from selector import Selector
 from utils import printstr
 

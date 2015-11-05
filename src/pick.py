@@ -4,7 +4,7 @@ import curses
 import inspect
 import argparse
 import os
-from enum import Enum
+from vendor.enum import Enum
 from output_processors.list_processor import ListProcessor
 from output_processors.table_processor import TableProcessor
 from selectors.multi_selector import MultiSelector
