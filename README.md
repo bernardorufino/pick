@@ -6,6 +6,8 @@
 - **List mode**: outputs a list divided by '\n', handy for selecting sublists before executing commands on some input. 
 - **Table mode**: lets you select parts of the table and constructs the final subtable, useful for filtering huge tables that some commands output.
 
+It's been developed with OSX in mind, but we consider porting it to other platforms.
+
 ## Demo
 
 [![pick demo](http://img.youtube.com/vi/zH6DeXg5-TQ/0.jpg)](https://www.youtube.com/watch?v=zH6DeXg5-TQ)
