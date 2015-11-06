@@ -28,4 +28,6 @@ Give it a try:
 * `ls -l | pick  # print files and copy to clipboard`
 * `ls | pick | xargs rm  # select files in current directory before removing`
 
+## Known issues
+* Can't see full output preview when it overflows
 
