@@ -16,29 +16,18 @@ def writestr(stdscr, *args):
     stdscr.addstr(*args)
 
 
-def pbcopy(data):
-    default_command = ['echo']
-
+def try_copy_to_clipboard(data):
     if sys.platform == 'linux2':
         command = ['xsel', '--clipboard']
     elif sys.platform == 'darwin':
         command = ['pbcopy']
-    else:
-        command = ['clip']
 
-    # Try to run the specified command and if it is not available, just pipe
-    # the result using the |default_command|.
     try:
         p = subprocess.Popen(command, stdin=subprocess.PIPE)
         p.communicate(data)
-    except OSError:
-        msg = ("Warning: Couldn't copy to the clipboard. Only Linux and Mac "
-            "are supported. If you are using one of these systems, check the "
-            "requirements section at https://github.com/bernardorufino/pick. "
-            "")
-        print msg
-        p = subprocess.Popen(default_command, stdin=subprocess.PIPE)
-        p.communicate(data)
+        return True
+    except:
+        return False
 
 
 def limit(x, a, b):

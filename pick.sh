@@ -25,8 +25,14 @@ else
     TMPFILE_OUT="$(mktemp)"
     tee "${TMPFILE_IN}" > /dev/null
 
-    # Sets the terminal to one that can output the colors properly on Linux.
-    TERM=xterm-256color python "${BASEDIR}/${SCRIPT}" "${TMPFILE_IN}" "${TMPFILE_OUT}" "$@" < /dev/tty > /dev/tty
+    # Sets the terminal to one that can output the colors properly.
+    # Linux terminals usually have TERM set to 'xterm', which can only display 8 colors.
+    # This program needs 256 colors support, so here we force it (most modern terminals
+    # support 256 colors). Check the link below for more context.
+    # Link: http://stackoverflow.com/a/10039347/1814970
+    # TODO: The program crashes if the terminal doesn't have such capability. Fix that.
+    TERM=xterm-256color \
+        python "${BASEDIR}/${SCRIPT}" "${TMPFILE_IN}" "${TMPFILE_OUT}" "$@" < /dev/tty > /dev/tty
 
     EXITCODE=$?
     if [[ ${EXITCODE} -eq 0 && -f "${TMPFILE_OUT}" ]]; then

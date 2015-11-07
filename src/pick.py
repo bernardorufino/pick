@@ -11,7 +11,7 @@ from selectors.multi_selector import MultiSelector
 from selectors.single_selector import SingleSelector
 
 from table.selectable_table import SelectableTable
-from utils import pbcopy
+from utils import try_copy_to_clipboard
 from view import View
 
 ss = inspect.cleandoc
@@ -67,7 +67,7 @@ def main():
     output = curses.wrapper(view.run)
 
     if output:
-        pbcopy(output)
+        try_copy_to_clipboard(output)
         with open(args.output, 'w') as f:
             f.write(output + os.linesep)
 
