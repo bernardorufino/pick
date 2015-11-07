@@ -21,7 +21,7 @@ It's been tested in OSX and Debian, pull requests for other platforms are welcom
 ### Manual
 * `cd <install-dir>`
 * `git clone -b release --depth 1 https://github.com/bernardorufino/pick.git .`
-* `ln -s $(pwd)/pick.sh /usr/local/pick  # or other directory present in the $PATH variable`
+* `ln -s $(pwd)/pick.sh /usr/local/bin/pick  # or other directory present in the $PATH variable`
 
 ## Using
 Give it a try:
