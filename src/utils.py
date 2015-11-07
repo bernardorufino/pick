@@ -21,11 +21,13 @@ def try_copy_to_clipboard(data):
         command = ['xsel', '--clipboard']
     elif sys.platform == 'darwin':
         command = ['pbcopy']
+    else:
+        return False
 
     try:
         p = subprocess.Popen(command, stdin=subprocess.PIPE)
         p.communicate(data)
-        return True
+        return p.returncode == 0
     except:
         return False
 
