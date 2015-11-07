@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-NAMESPACE="com.brufino.pick"
 SCRIPT="src/pick.py"
 
 # Get the directory of this script so we can execute the related python (http://stackoverflow.com/a/246128/212110)
@@ -22,10 +21,13 @@ if [[ -t 0 ]]; then
     exit 1
 else
     BASEDIR="$(get_base_dir)"
-    TMPFILE_IN="$(mktemp -t ${NAMESPACE})"
-    TMPFILE_OUT="$(mktemp -t ${NAMESPACE})"
+    TMPFILE_IN="$(mktemp)"
+    TMPFILE_OUT="$(mktemp)"
     tee "${TMPFILE_IN}" > /dev/null
-    python "${BASEDIR}/${SCRIPT}" "${TMPFILE_IN}" "${TMPFILE_OUT}" "$@" < /dev/tty > /dev/tty
+
+    # Sets the terminal to one that can output the colors properly on Linux.
+    TERM=xterm-256color python "${BASEDIR}/${SCRIPT}" "${TMPFILE_IN}" "${TMPFILE_OUT}" "$@" < /dev/tty > /dev/tty
+
     EXITCODE=$?
     if [[ ${EXITCODE} -eq 0 && -f "${TMPFILE_OUT}" ]]; then
         cat "${TMPFILE_OUT}"
