@@ -10,7 +10,7 @@ It's been tested in OSX and Debian, pull requests for other platforms are welcom
 
 ## Demo
 
-[![pick demo](http://img.youtube.com/vi/zH6DeXg5-TQ/0.jpg)](https://www.youtube.com/watch?v=zH6DeXg5-TQ)
+[![pick demo](http://img.youtube.com/vi/gB_ngPuvKko/0.jpg)](https://www.youtube.com/watch?v=gB_ngPuvKko)
 
 ## Installing
 
