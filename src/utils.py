@@ -34,3 +34,17 @@ def try_copy_to_clipboard(data):
 
 def limit(x, a, b):
     return max(a, min(b, x))
+
+
+def join_line(cells, delimiter):
+    if delimiter is None:
+        assert len(cells) == 1
+        return cells[0]
+    return delimiter.join(cells)
+
+
+def split_line(line, delimiter):
+    if delimiter is None:
+        return [line]
+    d = None if delimiter == ' ' else delimiter
+    return line.split(d)

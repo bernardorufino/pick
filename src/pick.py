@@ -11,7 +11,7 @@ from selectors.multi_selector import MultiSelector
 from selectors.single_selector import SingleSelector
 
 from table.selectable_table import SelectableTable
-from utils import try_copy_to_clipboard
+from utils import try_copy_to_clipboard, split_line
 from view import View
 
 ss = inspect.cleandoc
@@ -30,6 +30,9 @@ parser.add_argument('output', help=argparse.SUPPRESS)
 parser.add_argument('-d', '--delimiter', default=' ',
                     help="Delimiter to split the columns of the table, defaults to any whitespace char.")
 
+parser.add_argument('-D', '--no-delimiter', default=False, action='store_true',
+                    help="Don't split the input in columns. Takes priority over --delimiter option.")
+
 parser.add_argument('-t', '--table', default=False, action='store_true',
                     help="Enter in subtable selection mode. In this mode instead of selecting separate cells and "
                          "returning a list as output, you select a structured portion of the table and the output is "
@@ -42,9 +45,7 @@ class SelectionMode(Enum):
 
 
 def process_input(input_table, delimiter):
-    if delimiter == ' ':
-        delimiter = None
-    return [line.rstrip(os.linesep).split(delimiter) for line in input_table]
+    return [split_line(line.rstrip(os.linesep), delimiter) for line in input_table]
 
 
 def main():
@@ -58,12 +59,14 @@ def main():
         selectors = [SingleSelector(), MultiSelector()]
         output_processors = [ListProcessor(), TableProcessor()]
 
+    delimiter = None if args.no_delimiter else args.delimiter
+
     with open(args.input, 'r') as f:
         rows = f.readlines()
-    input_table = process_input(rows, args.delimiter)
+    input_table = process_input(rows, delimiter)
     table = SelectableTable(input_table)
 
-    view = View(table, selectors, output_processors, args)
+    view = View(table, selectors, output_processors, delimiter)
     output = curses.wrapper(view.run)
 
     if output:

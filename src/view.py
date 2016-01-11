@@ -12,9 +12,9 @@ class View(object):
     }
     MARGIN = (1, 2)
 
-    def __init__(self, table, selectors, output_processors, args):
+    def __init__(self, table, selectors, output_processors, delimiter):
         self._table = table
-        self.delimiter = args.delimiter
+        self.delimiter = delimiter
         self.table_offset = (0, 0)
 
         self._selectors = selectors[:]

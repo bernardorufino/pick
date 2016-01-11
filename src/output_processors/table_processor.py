@@ -2,7 +2,7 @@ import curses
 import os
 from output_processors.output_processor import OutputProcessor
 from table.table import Table
-from utils import printstr
+from utils import printstr, join_line
 
 
 class TableProcessor(OutputProcessor):
@@ -29,7 +29,7 @@ class TableProcessor(OutputProcessor):
 
     def process(self):
         output = self._structured_output()
-        return os.linesep.join(self._delimiter.join(line) for line in output)
+        return os.linesep.join(join_line(line, self._delimiter) for line in output)
 
     def _structured_output(self):
         # TODO: Add option to compress column widths?
